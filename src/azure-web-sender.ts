@@ -1,7 +1,7 @@
 import { ServiceBusClient, QueueClient, Sender, SendableMessageInfo } from '@azure/service-bus';
 import { Guid } from 'guid-typescript';
 
-export class ServicebusEvents {
+export class AzureWebSender {
     private sbClient: ServiceBusClient;
     private sbQueueClient: QueueClient;
     private sbSender: Sender;
@@ -16,7 +16,7 @@ export class ServicebusEvents {
         this.sbSender = this.sbQueueClient.createSender();
     }
 
-    public async sendMessage(body: any): Promise<void> {
+    public async sendAsync(body: any): Promise<void> {
         try {
             const messageGuidId = Guid.create();
             const message = {
