@@ -1,5 +1,5 @@
-import { Observable, UnaryFunction, Subject } from "rxjs";
-import { HubConnection, HubConnectionBuilder } from "@aspnet/signalr";
+import { Subject } from 'rxjs';
+import { HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
 
 export class SignalRService {
     private signalrMessage: Subject<any>;

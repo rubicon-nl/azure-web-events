@@ -1,12 +1,13 @@
 {
     "compilerOptions": {
       "target": "es6",
-      "module": "commonjs",
+      "module": "es6",
       "declaration": true,
-      "outDir": "./lib",
+      "outDir": "./dist/",
       "strict": true,
       "esModuleInterop": true,
       "strictPropertyInitialization": false,
+      "moduleResolution": "node"
     },
     "include": ["src"],
     "exclude": ["node_modules", "**/__tests__/*"]
