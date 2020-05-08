@@ -43,10 +43,10 @@ export class AzureWebCommandService {
         const storedCommands = this.getStoredCommands();
         if (!storedCommands) {
             return null;
-        }
-
+        }       
         const index = storedCommands.findIndex((id) => id.equals(commandId));
         const updatedStoredCommands = storedCommands.splice(index, 1);
+
         this.setStoredCommands(updatedStoredCommands);
         return updatedStoredCommands;
     }
@@ -57,10 +57,12 @@ export class AzureWebCommandService {
             return null;
         }
 
-        return JSON.parse(storedCommands) as Array<Guid>;
+        const storage = JSON.parse(storedCommands) as Array<string>;
+        return storage.map(c => Guid.parse(c));        
     }
 
     private static setStoredCommands(commands: Array<Guid>): void {
-        localStorage.setItem(this.localStorageKey, JSON.stringify(commands));
+        const stringyfyArray = commands.map(c => c.toString());
+        localStorage.setItem(this.localStorageKey, JSON.stringify(stringyfyArray));
     }
 }

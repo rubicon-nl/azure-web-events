@@ -1,6 +1,7 @@
 import { Guid } from 'guid-typescript';
 import * as CryptoJS from 'crypto-js';
 import axios from 'axios';
+import { AzureWebCommandService } from './azure-web-command-service';
 
 export class ServiceBusService {
     private serviceBusNameSpace: string;
@@ -19,16 +20,19 @@ export class ServiceBusService {
         const signature = this.getSASSignature(queueName);
 
         try {
-            const response = await axios.post(`https://${this.serviceBusNameSpace}.servicebus.windows.net/${queueName}`, args, {
-                                            headers: {
-                                                "Authorization": signature,
-                                                "Content-Type": "application/atom+xml;type=entry;charset=utf-8",
-                                                "BrokerProperties": JSON.stringify({ "CorrelationId": correlationId }),
-                                                }
-                                            });
+            // First we add it to ensure that the id is stored before the response is received.
+            AzureWebCommandService.addCommand(correlationId);
+            const response = await axios.post(`https://${this.serviceBusNameSpace}.servicebus.windows.net/${queueName}`, args, { headers: {
+                                                                                                                                    "Authorization": signature,
+                                                                                                                                    "Content-Type": "application/atom+xml;type=entry;charset=utf-8",
+                                                                                                                                    "BrokerProperties": JSON.stringify({ "CorrelationId": correlationId }),
+                                                                                                                                    }
+                                                                                                                                });
 
-                                        console.log(`THE RESPONSE ${response}`);
+            
         } catch (error) {
+            // Something when't wrong with sending the message. Remove the stored correlationid.
+            AzureWebCommandService.deleteCommand(correlationId)
             if (error.response) {
                 throw Error(`An error occured while sending the message ${error.response.status}`)
             }

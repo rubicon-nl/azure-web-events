@@ -29,17 +29,7 @@ export class AzureWebEvent {
                             error?: (error: string) => void,
                             progress?: (percentage: number, message: string) => void): Promise<void> {
         const correlationId = Guid.create();
-        
-        try {
-            // First we add it to ensure that the id is stored before the response is received.
-            AzureWebCommandService.addCommand(correlationId);
-            await this.sbClient.sendMessageAsync(methodName + "-queue", correlationId, args);
-
-        } catch (error) {
-            // Something when't wrong with sending the message. Remove the stored correlationid.
-            AzureWebCommandService.deleteCommand(correlationId)
-            console.error(`An error occured while sending the message: ${error} `);
-        }
+        await this.sbClient.sendMessageAsync(methodName + "-queue", correlationId, args);
     }
 
      /**
