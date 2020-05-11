@@ -1,5 +1,4 @@
 import { Guid } from 'guid-typescript';
-import { AzureWebCommandService } from './azure-web-command-service';
 import { AzureWebConfig } from './azure-web-config';
 import { SignalRService } from './signalr-service';
 import { ServiceBusService } from './service-bus-service';

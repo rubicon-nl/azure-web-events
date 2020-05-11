@@ -1,5 +1,4 @@
 import { Guid } from 'guid-typescript';
-import * as CryptoJS from 'crypto-js';
 import { AzureWebCommandService } from './azure-web-command-service';
 
 export class ServiceBusService {

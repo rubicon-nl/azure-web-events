@@ -18,6 +18,7 @@ export class SignalRService {
         .catch(error => { throw Error(`Error while starting connection: ${error}`);});
 
         this.hubConnection.on(eventName, (args: any[]) => {
+            console.log(`Received message ${JSON.stringify(args)}`);
             this.signalrMessage.next(args);
         })
 
