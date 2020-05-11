@@ -13,12 +13,11 @@ export class AzureWebEvent {
 
     constructor() { }
 
-    public init(serviceBusNameSpace: string): void {
-        this.getAweConfig(serviceBusNameSpace)
+    public init(endpoint: string, sharedKey: string): void {
+        this.getAweConfig(endpoint, sharedKey)
         .subscribe((config: AzureWebConfig) => {
-            console.log(`The connectionstring: ${serviceBusNameSpace}`);
-            this.sbClient = new ServiceBusService(config.serviceBusUrl, config.sharedAccessKeyName, config.sharedAccessKey);
-            this.srClient = new SignalRService(config.signalRUrl);
+            this.sbClient = new ServiceBusService(config.baseUrl, config.sharedAccessKey);
+            this.srClient = new SignalRService(config.baseUrl);
             this.initialized = true;
         });
     }
@@ -29,7 +28,10 @@ export class AzureWebEvent {
                             error?: (error: string) => void,
                             progress?: (percentage: number, message: string) => void): Promise<void> {
         const correlationId = Guid.create();
-        await this.sbClient.sendMessageAsync(methodName + "-queue", correlationId, args);
+
+        this.listenToEvent("finished-commands", correlationId, callback);
+
+        await this.sbClient.sendMessageAsync(methodName, correlationId, args);
     }
 
      /**
@@ -37,21 +39,21 @@ export class AzureWebEvent {
      * When the handler is invoked it invokes the completedEvent observable. 
      * @param methodName The hub method name.
      */
-    private listenToEvent(methodName: string, correlationId: Guid, callback: (args: any[]) => void): void {
+    private listenToEvent(methodName: string, correlationId: Guid, callback?: (args: any[]) => void): void {
+
+        if (callback) {
             this.srClient.listen(methodName)
             .pipe(filter((signalrArgs: any[]) => Guid.parse(signalrArgs[0]).equals(correlationId)),
                   map((signalrArgs: any[]) => signalrArgs.slice(1)),
                   tap(callback))
             .subscribe();
+        }           
     }
 
-    private getAweConfig(serviceBusNameSpace: string): Observable<AzureWebConfig> {
+    private getAweConfig(endpoint: string, sharedKey: string): Observable<AzureWebConfig> {
         const config = new AzureWebConfig();
-        config.serviceBusUrl = serviceBusNameSpace;
-        config.sharedAccessKeyName = "LocalExplorer";
-        config.sharedAccessKey = "nujvznawC+HsMI7aka1iQgvTgCNmMnPzuYDsuDFyI9s=";
-        config.QueueName = "update-commands-queue";
-        config.signalRUrl = "https://cqrs-messaging-functions.azurewebsites.net/";
+        config.sharedAccessKey = sharedKey;
+        config.baseUrl = `https://${endpoint}-functions.azurewebsites.net/api`;
 
         return of(config);
     }

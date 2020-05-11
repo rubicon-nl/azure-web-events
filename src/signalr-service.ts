@@ -2,7 +2,7 @@ import { Subject } from 'rxjs';
 import { HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
 
 export class SignalRService {
-    private signalrMessage: Subject<any>;
+    private signalrMessage: Subject<any> = new Subject<any>();
     private hubConnection: HubConnection;
 
     constructor(signalrUrl: string) {
