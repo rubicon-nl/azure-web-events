@@ -1,6 +1,5 @@
 export class AzureWebConfig {
-    public baseUrl: string;
-    public sharedAccessKeyName: string;
+    public nameSpace: string;
     public sharedAccessKey: string;
     
 }

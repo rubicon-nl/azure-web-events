@@ -8,6 +8,10 @@ export class LocalStorageItem {
     }
 
     public toString = () => {
+        return `${this.correlationId}-${this.eventName}`; 
+    }
+
+    public toJson = () => {
         return JSON.stringify(this);
     }
 }

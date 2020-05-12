@@ -13,7 +13,6 @@ export class ServiceBusService {
 
     public async sendMessageAsync(queueName: string, correlationId: Guid, args?: any[]): Promise<void> {
         const url = `${this.baseUrl}/ReceiveWebEvent`;
-        //const signature = this.getSASSignature(url);
         try {
             // First we add it to ensure that the id is stored before the response is received.
             AzureWebCommandService.addCommand(queueName, correlationId);
@@ -21,12 +20,10 @@ export class ServiceBusService {
             Http.open("POST", url, true);
             Http.setRequestHeader("Content-Type", "application/json");
             Http.setRequestHeader("x-functions-key", this.sharedAccessKey);
-            
+            Http.setRequestHeader("correlation-id", correlationId.toString())
+
             // Send the message.
-            Http.send(JSON.stringify({
-                CorrelationId: correlationId.toString(),
-                args: args
-            }));            
+            Http.send(JSON.stringify(args));
         } catch (error) {
             // Something when't wrong with sending the message. Remove the stored correlationid.
             AzureWebCommandService.deleteCommand(correlationId)
@@ -35,11 +32,5 @@ export class ServiceBusService {
             }
             throw Error(`Oops... something wen't wrong ${error}`);
         }
-    }
-
-    private createExpireUnix(lifeTimeinMinuts: number): number {
-        const now = new Date();
-        now.setMinutes(now.getMinutes() + lifeTimeinMinuts);
-        return now.getTime();
     }
 }

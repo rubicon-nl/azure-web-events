@@ -23,6 +23,15 @@ export class AzureWebCommandService {
     }
 
     /**
+     * Check if given command is sent.
+     * @param commandId The command id.
+     */
+    public static hasCommand(commandId: Guid): boolean {
+        const storedCommands = this.getCommand(commandId);
+        return storedCommands !== null ? true : false;
+    }
+
+    /**
      * Store the command id from a sent azure web event.
      * @param commandId The command id.
      * @returns A updated list of all send azure web events.
@@ -47,10 +56,10 @@ export class AzureWebCommandService {
             return null;
         }       
         const index = storedCommands.findIndex((id) => commandId.toString() === id.correlationId);
-        const updatedStoredCommands = storedCommands.splice(index, 1);
+        storedCommands.splice(index, 1);
 
-        this.setStoredCommands(updatedStoredCommands);
-        return updatedStoredCommands;
+        this.setStoredCommands(storedCommands);
+        return storedCommands;
     }
 
     private static getStoredCommands(): Array<LocalStorageItem> | null {
@@ -59,12 +68,10 @@ export class AzureWebCommandService {
             return null;
         }
 
-        const storage = JSON.parse(storedCommands) as Array<string>;
-        return storage.map(c => JSON.parse(c) as LocalStorageItem);        
+        return JSON.parse(storedCommands) as Array<LocalStorageItem>;       
     }
 
     private static setStoredCommands(commands: Array<LocalStorageItem>): void {
-        const stringyfyArray = commands.map(c => c.toString());
-        localStorage.setItem(this.localStorageKey, JSON.stringify(stringyfyArray));
+        localStorage.setItem(this.localStorageKey, JSON.stringify(commands));
     }
 }
