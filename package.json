@@ -1,9 +1,9 @@
 {
-  "name": "azure-web-event",
-  "version": "0.1.0",
+  "name": "azure-web-events",
+  "version": "0.3.0",
   "description": "This is a concept version",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "scripts": {
     "clean": "shx rm -rf _bundles lib lib-esm",
     "build": "npm run clean && tsc && tsc -m es6 --outDir lib-esm && webpack",
@@ -12,9 +12,9 @@
   "keywords": [],
   "author": "Rubicon Jeffrey & Arthur",
   "license": "ISC",
-  "homepage": "https://github.com/arthurvandijk/azure-web-events/blob/master/README.md",
+  "homepage": "https://github.com/arthurvandijk/azure-web-events",
   "files": [
-    "dist/**/*"
+    "lib/**/*"
   ],
   "repository": {
     "type": "git",

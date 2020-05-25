@@ -3,8 +3,8 @@ const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
     entry: {
-        'azure-web-event': './src/index.ts',
-        'azure-web-event.min': './src/index.ts'
+        'azure-web-events': './src/index.ts',
+        'azure-web-events.min': './src/index.ts'
     },
     output: {
         path: path.resolve(__dirname, '_bundles'),
