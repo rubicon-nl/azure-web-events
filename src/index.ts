@@ -45,7 +45,7 @@ export class AzureWebEvent {
         const correlationId = Guid.create();
 
         if (callback) {
-            this.listenToEvent("finished-commands", callback);    
+            this.listenToEvent(methodName, callback);    
         }
         if (error) {
             this.listenToEvent("error-commands", error);    
