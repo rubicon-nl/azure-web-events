@@ -1,5 +1,5 @@
 import { Guid } from 'guid-typescript';
-import { AzureWebCommandService } from './azure-web-command-service';
+import { LocalCommandStorageService } from './local-command-storage-service';
 
 export class ServiceBusService {
     private baseUrl: string;
@@ -11,26 +11,32 @@ export class ServiceBusService {
         this.sharedAccessKey = sharedAccesKey;
     }
 
-    public async sendMessageAsync(queueName: string, correlationId: Guid, args?: any[]): Promise<void> {
-        const url = `${this.baseUrl}/ReceiveWebEvent`;
+    public async sendCommandAsync(queueName: string, correlationId: Guid, args?: any[]): Promise<void> {
+        const url = `${this.baseUrl}/SendCommand`;
+        // First we add it to ensure that the id is stored before the response is received.
+        LocalCommandStorageService.addCommand(queueName, correlationId);
+        
         try {
-            // First we add it to ensure that the id is stored before the response is received.
-            AzureWebCommandService.addCommand(queueName, correlationId);
-            const Http = new XMLHttpRequest();
-            Http.open("POST", url, true);
-            Http.setRequestHeader("Content-Type", "application/json");
-            Http.setRequestHeader("x-functions-key", this.sharedAccessKey);
-            Http.setRequestHeader("correlation-id", correlationId.toString())
-
-            // Send the message.
-            Http.send(JSON.stringify(args));
+            const httpRequest = this.createHttpRequest("POST", url, correlationId.toString());
+            httpRequest.send(JSON.stringify(args));
         } catch (error) {
             // Something when't wrong with sending the message. Remove the stored correlationid.
-            AzureWebCommandService.deleteCommand(correlationId)
+            LocalCommandStorageService.deleteCommand(correlationId)
             if (error.response) {
                 throw Error(`An error occured while sending the message ${error.response.status}`)
             }
+
             throw Error(`Oops... something wen't wrong ${error}`);
         }
+    }
+
+    private createHttpRequest(method: string, url: string, corelationId: string): XMLHttpRequest {
+        const request = new XMLHttpRequest();
+        request.open(method, url, true);
+        request.setRequestHeader("Content-Type", "application/json");
+        request.setRequestHeader("x-functions-key", this.sharedAccessKey);
+        request.setRequestHeader("correlation-id", corelationId)
+
+        return request;
     }
 }

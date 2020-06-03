@@ -1,10 +1,10 @@
 import { Subject } from 'rxjs';
 import { HubConnection, HubConnectionBuilder, LogLevel, HubConnectionState } from '@aspnet/signalr';
-import { AzureWebCommandService } from './azure-web-command-service';
+import { LocalCommandStorageService } from './local-command-storage-service';
 import { Guid } from 'guid-typescript';
-import { SignalRResponse } from './signal-r-response';
+import { SignalrResponse } from './signalr-response';
 
-export class SignalRService {
+export class SignalrService {
     private signalrMessage: Subject<any> = new Subject<any>();
     private hubConnection: HubConnection;
 
@@ -13,7 +13,7 @@ export class SignalRService {
      * @param signalrUrl The azure signalR endpoint.
      * @param enableLogging Enable logging with level "Debug".
      */
-    constructor(signalrUrl: string, enableLogging?: boolean) {
+     public async initialize(signalrUrl: string, enableLogging?: boolean): Promise<void> {
         const connection = new HubConnectionBuilder()
         .withUrl(signalrUrl);
         if (enableLogging) {
@@ -21,9 +21,11 @@ export class SignalRService {
         }
 
         this.hubConnection = connection.build();
-        this.hubConnection.start()
+        await this.hubConnection.start()
             .then()
-            .catch(error => { throw Error(`Error while starting connection: ${error}`);});
+            .catch(error => { 
+                throw Error(`Error while starting connection: ${error}`);
+            });
      }
 
     /**
@@ -39,11 +41,11 @@ export class SignalRService {
         }       
 
         this.hubConnection.on(eventName, (args: any) => {
-            const response = JSON.parse(args) as SignalRResponse;
-            var correlationId = Guid.parse(response.CorrelationId);
+            const response = JSON.parse(args) as SignalrResponse;
+            const correlationId = Guid.parse(response.CorrelationId);
             
-            if (AzureWebCommandService.hasCommand(correlationId)) {
-                AzureWebCommandService.deleteCommand(correlationId);
+            if (LocalCommandStorageService.hasCommand(correlationId)) {
+                LocalCommandStorageService.deleteCommand(correlationId);
                 this.signalrMessage.next(response.Body);
             }
         });

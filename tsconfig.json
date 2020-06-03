@@ -10,8 +10,9 @@
       "esModuleInterop": true,
       "allowSyntheticDefaultImports": true,
       "strictPropertyInitialization": false,
-      "moduleResolution": "node"
+      "moduleResolution": "node",
+      "resolveJsonModule": true,
     },
-    "include": ["src"],
+    "include": ["src", "spec"],
     "exclude": ["node_modules", "**/__tests__/*"]
   }

@@ -7,15 +7,23 @@
   "scripts": {
     "clean": "shx rm -rf _bundles lib lib-esm",
     "build": "npm run clean && tsc && tsc -m es6 --outDir lib-esm && webpack",
+    "build:ts": "",
     "lint": "tslint -p tsconfig.json"
   },
-  "keywords": [],
+  "keywords": [
+    "Azure",
+    "Typescript",
+    "SignalR"
+  ],
   "author": "Rubicon Jeffrey & Arthur",
   "license": "ISC",
   "homepage": "https://github.com/arthurvandijk/azure-web-events",
   "files": [
-    "lib/**/*"
+    "/lib/**/*"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/arthurvandijk/azure-web-events.git"
@@ -28,6 +36,8 @@
   },
   "devDependencies": {
     "awesome-typescript-loader": "^5.2.1",
+    "jasmine": "^3.5.0",
+    "pkg-ok": "^2.3.1",
     "prettier": "^2.0.5",
     "shx": "^0.3.2",
     "terser-webpack-plugin": "^3.0.1",

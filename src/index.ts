@@ -1,30 +1,26 @@
 import { Guid } from 'guid-typescript';
 import { AzureWebConfig } from './azure-web-config';
-import { SignalRService } from './signalr-service';
+import { SignalrService } from './signalr-service';
 import { ServiceBusService } from './service-bus-service';
 import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
-export class AzureWebEvent {
+export class AzureWebEvents {
     private sbClient: ServiceBusService;
-    private srClient: SignalRService;
+    private srClient: SignalrService;
     public initialized: boolean = false;
 
     /**
-     * Create a new instance of AzureWebEvent.
-     */
-    constructor() { }
-
-    /**
      * Initialize the communication with azure.
-     * @param nameSpace Azure namespace.
+     * @param url Azure function URL.
      * @param sharedKey Shared access host of function key. 
      */
-    public init(nameSpace: string, sharedKey: string): void {
-        this.getAweConfig(nameSpace, sharedKey)
+    public async init(url: string, sharedKey: string): Promise<void> {
+        this.getAweConfig(url, sharedKey)
         .subscribe((config: AzureWebConfig) => {
             this.sbClient = new ServiceBusService(config.nameSpace, config.sharedAccessKey);
-            this.srClient = new SignalRService(config.nameSpace);
+            this.srClient = new SignalrService();
+            this.srClient.initialize(config.nameSpace);
             this.initialized = true;
         });
     }
@@ -51,24 +47,24 @@ export class AzureWebEvent {
             this.listenToEvent("error-commands", error);    
         }
         
-        await this.sbClient.sendMessageAsync(methodName, correlationId, args);
+        await this.sbClient.sendCommandAsync(methodName, correlationId, args);
     }
 
      /**
-     * Register a handler that will be invoked when the hub method with the specific methodname is invoked.
-     * When the handler is invoked it invokes the completedEvent observable. 
-     * @param methodName The hub method name.
-     */
+      * Register a handler that will be invoked when the hub method with the specific methodname is invoked.
+      * When the handler is invoked it invokes the completedEvent observable. 
+      * @param methodName The hub method name.
+      */
     private listenToEvent(methodName: string, callback: (args: any) => void): void {
             this.srClient.listen(methodName)
             .pipe(tap(callback))
             .subscribe();
     }
 
-    private getAweConfig(endpoint: string, sharedKey: string): Observable<AzureWebConfig> {
+    private getAweConfig(url: string, sharedKey: string): Observable<AzureWebConfig> {
         const config = new AzureWebConfig();
         config.sharedAccessKey = sharedKey;
-        config.nameSpace = `https://${endpoint}-functions.azurewebsites.net/api`;
+        config.nameSpace = url;
 
         return of(config);
     }
