@@ -1,11 +1,18 @@
 {
     "compilerOptions": {
-      "target": "es6",
+      "target": "es5",
       "module": "commonjs",
       "declaration": true,
-      "outDir": "./lib",
-      "strict": true
+      "lib": ["ES2015", "dom"],
+      "outDir": "./lib/",
+      "sourceMap": true,
+      "strict": true,
+      "esModuleInterop": true,
+      "allowSyntheticDefaultImports": true,
+      "strictPropertyInitialization": false,
+      "moduleResolution": "node",
+      "resolveJsonModule": true,
     },
-    "include": ["src"],
+    "include": ["src", "spec"],
     "exclude": ["node_modules", "**/__tests__/*"]
   }
