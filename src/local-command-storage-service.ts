@@ -1,5 +1,5 @@
 import { Guid } from "guid-typescript";
-import { LocalStorageItem } from "./azure-web-local-storage-item";
+import { LocalStorageItem } from "./local-storage-item";
 
 /**
  * Manage local stored azure web event commands.

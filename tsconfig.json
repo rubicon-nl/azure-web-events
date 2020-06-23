@@ -12,6 +12,10 @@
       "strictPropertyInitialization": false,
       "moduleResolution": "node",
       "resolveJsonModule": true,
+      "types": [
+        "jasmine", "node"
+      ],
+      "plugins": []
     },
     "include": ["src", "spec"],
     "exclude": ["node_modules", "**/__tests__/*"]

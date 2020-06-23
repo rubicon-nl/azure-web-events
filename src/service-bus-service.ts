@@ -1,42 +1,33 @@
 import { Guid } from 'guid-typescript';
 import { LocalCommandStorageService } from './local-command-storage-service';
+import { AzureHttpService } from './azure-http-service';
 
 export class ServiceBusService {
     private baseUrl: string;
     private sharedAccessKey: string;
 
-    constructor(sbNameSpace: string,
+    constructor(private httpService: AzureHttpService,
+                sbNameSpace: string,
                 sharedAccesKey: string) {
         this.baseUrl = sbNameSpace;
         this.sharedAccessKey = sharedAccesKey;
     }
 
-    public async sendCommandAsync(queueName: string, correlationId: Guid, args?: any[]): Promise<void> {
+    /**
+     * Send a event to azure
+     * @param queueName The name of the event.
+     * @param correlationId The guid correlation id for keeping track.
+     * @param args event body.
+     */
+    public async sendEventAsync(eventName: string, correlationId: Guid, args?: any[]): Promise<void> {
         const url = `${this.baseUrl}/SendCommand`;
-        // First we add it to ensure that the id is stored before the response is received.
-        LocalCommandStorageService.addCommand(queueName, correlationId);
-        
-        try {
-            const httpRequest = this.createHttpRequest("POST", url, correlationId.toString());
-            httpRequest.send(JSON.stringify(args));
-        } catch (error) {
-            // Something when't wrong with sending the message. Remove the stored correlationid.
-            LocalCommandStorageService.deleteCommand(correlationId)
-            if (error.response) {
-                throw Error(`An error occured while sending the message ${error.response.status}`)
-            }
-
-            throw Error(`Oops... something wen't wrong ${error}`);
-        }
-    }
-
-    private createHttpRequest(method: string, url: string, corelationId: string): XMLHttpRequest {
-        const request = new XMLHttpRequest();
-        request.open(method, url, true);
-        request.setRequestHeader("Content-Type", "application/json");
-        request.setRequestHeader("x-functions-key", this.sharedAccessKey);
-        request.setRequestHeader("correlation-id", corelationId)
-
-        return request;
+        await this.httpService.post(url, this.sharedAccessKey, correlationId.toString(), args)
+        .then(() => {
+            // First we add it to ensure that the id is stored before the response is received.
+            LocalCommandStorageService.addCommand(eventName, correlationId);
+            console.debug(`The command is succesfully send`)
+        }).catch((reason) => {
+            console.error(`An error occured while sending the command: ${reason.status}-${reason.statusText}`)
+        });
     }
 }

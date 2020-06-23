@@ -10,11 +10,11 @@ module.exports = {
         path: path.resolve(__dirname, '_bundles'),
         filename: '[name].js',
         libraryTarget: 'umd',
-        library: 'AzureWebEvent',
+        library: 'AzureWebEvents',
         umdNamedDefine: true,
     },
     resolve: {
-        extensions: ['.ts','.js'],
+        extensions: [ '.tsx', '.ts','.js'],
     },
     devtool: 'source-map',
     module: {
