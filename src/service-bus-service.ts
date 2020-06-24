@@ -1,9 +1,9 @@
 import { Guid } from 'guid-typescript';
-import { LocalCommandStorageService } from './local-command-storage-service';
-import { IServiceBusService } from './interfaces/service-bus.service';
-import { injectable, inject } from 'inversify';
-import TYPES from './interfaces/types';
+import { inject, injectable } from 'inversify';
 import { IAzureHttpService } from './interfaces/azure-http-service';
+import { IServiceBusService } from './interfaces/service-bus.service';
+import TYPES from './interfaces/types';
+import { LocalCommandStorageService } from './local-command-storage-service';
 
 @injectable()
 export class ServiceBusService implements IServiceBusService {
@@ -11,7 +11,7 @@ export class ServiceBusService implements IServiceBusService {
     private baseUrl: string;
     private sharedAccessKey: string;
 
-    constructor(@inject(TYPES.IAzureHttpService)  http: IAzureHttpService) {
+    constructor(@inject(TYPES.IAzureHttpService) http: IAzureHttpService) {
         this.http = http;
     }
 
@@ -19,7 +19,6 @@ export class ServiceBusService implements IServiceBusService {
         this.baseUrl = sbNameSpace;
         this.sharedAccessKey = sharedAccesKey;
     }
-
 
     /**
      * Send a event to azure
