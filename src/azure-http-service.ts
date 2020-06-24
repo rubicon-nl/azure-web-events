@@ -1,26 +1,26 @@
-export class AzureHttpService {
+import { injectable } from 'inversify';
+import { IAzureHttpService } from './interfaces/azure-http-service';
 
-    constructor() {
-
-    }
+@injectable()
+export class AzureHttpService implements IAzureHttpService {
 
     public async post(url: string, sasKey: string, correlationId: string, body?: any[]): Promise<void> {
         return new Promise((resolve, reject) => {
             const request = this.createHttpRequest('POST', url, correlationId, sasKey);
             
-            request.onerror = function() {
+            request.onerror = () => {
                 reject({
                     status: 0,
                     statusText: request.statusText
                 });
             }
 
-            request.onload = function() {
-                if (this.status >= 200 && this.status <= 300) {
+            request.onload = () => {
+                if (request.status >= 200 && request.status <= 300) {
                     resolve(request.response);
                 } else {
                     reject({
-                        status: this.status,
+                        status: request.status,
                         statusText: request.statusText
                     });
                 }

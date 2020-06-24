@@ -1,17 +1,25 @@
 import { Guid } from 'guid-typescript';
 import { LocalCommandStorageService } from './local-command-storage-service';
-import { AzureHttpService } from './azure-http-service';
+import { IServiceBusService } from './interfaces/service-bus.service';
+import { injectable, inject } from 'inversify';
+import TYPES from './interfaces/types';
+import { IAzureHttpService } from './interfaces/azure-http-service';
 
-export class ServiceBusService {
+@injectable()
+export class ServiceBusService implements IServiceBusService {
+    protected http: IAzureHttpService;
     private baseUrl: string;
     private sharedAccessKey: string;
 
-    constructor(private httpService: AzureHttpService,
-                sbNameSpace: string,
-                sharedAccesKey: string) {
+    constructor(@inject(TYPES.IAzureHttpService)  http: IAzureHttpService) {
+        this.http = http;
+    }
+
+    public initialize(sbNameSpace: string, sharedAccesKey: string): void {
         this.baseUrl = sbNameSpace;
         this.sharedAccessKey = sharedAccesKey;
     }
+
 
     /**
      * Send a event to azure
@@ -20,14 +28,13 @@ export class ServiceBusService {
      * @param args event body.
      */
     public async sendEventAsync(eventName: string, correlationId: Guid, args?: any[]): Promise<void> {
-        const url = `${this.baseUrl}/SendCommand`;
-        await this.httpService.post(url, this.sharedAccessKey, correlationId.toString(), args)
-        .then(() => {
-            // First we add it to ensure that the id is stored before the response is received.
-            LocalCommandStorageService.addCommand(eventName, correlationId);
-            console.debug(`The command is succesfully send`)
-        }).catch((reason) => {
-            console.error(`An error occured while sending the command: ${reason.status}-${reason.statusText}`)
-        });
+        const url = `${this.baseUrl}/ReceiveWebEvent`;
+        await this.http.post(url, this.sharedAccessKey, correlationId.toString(), args)
+            .then(() => {
+                // First we add it to ensure that the id is stored before the response is received.
+                LocalCommandStorageService.addCommand(eventName, correlationId);
+            }).catch((reason) => {
+                throw new Error(`An error occured while sending the command: ${reason.status}-${reason.statusText}`);
+            });
     }
 }

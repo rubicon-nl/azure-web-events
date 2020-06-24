@@ -3,8 +3,11 @@ import { HubConnection, HubConnectionBuilder, LogLevel, HubConnectionState } fro
 import { LocalCommandStorageService } from './local-command-storage-service';
 import { Guid } from 'guid-typescript';
 import { SignalrResponse } from './signalr-response';
+import { ISignalRService } from './interfaces/signal-r-service';
+import { injectable } from 'inversify';
 
-export class SignalrService {
+@injectable()
+export class SignalrService implements ISignalRService {
     private signalrMessage: Subject<any> = new Subject<any>();
     private hubConnection: HubConnection;
 

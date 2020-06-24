@@ -15,7 +15,8 @@
       "types": [
         "jasmine", "node"
       ],
-      "plugins": []
+      "plugins": [],
+      "experimentalDecorators": true
     },
     "include": ["src", "spec"],
     "exclude": ["node_modules", "**/__tests__/*"]
