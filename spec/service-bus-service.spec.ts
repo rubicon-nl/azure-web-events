@@ -1,19 +1,19 @@
 import { Guid } from 'guid-typescript';
-import 'reflect-metadata'; // This import must be the first import or DI will break
 import { AzureHttpService } from '../src/azure-http-service';
 import { LocalCommandStorageService } from '../src/local-command-storage-service';
 import { LocalStorageItem } from '../src/local-storage-item';
 import { ServiceBusService } from '../src/service-bus-service';
-import TYPES from './../src/interfaces/types';
 import container from './../src/inversify.config';
 
 describe(`servicebus testing`, async () => {
     let serviceBusService: ServiceBusService;
     let azureHttpService: AzureHttpService;
+    let localCommandStorageService: LocalCommandStorageService;
         
     beforeEach(async () => {
-        azureHttpService = container.get(TYPES.IAzureHttpService);
-        serviceBusService = new ServiceBusService(azureHttpService);
+        azureHttpService = container.get(AzureHttpService);
+        localCommandStorageService = container.get(LocalCommandStorageService);
+        serviceBusService = new ServiceBusService(azureHttpService, localCommandStorageService);
         serviceBusService.initialize('testNameSpace', 'testKey');
     });
 
@@ -22,7 +22,7 @@ describe(`servicebus testing`, async () => {
         const testQueue: string = 'testQueue';
         const testGuid: Guid = Guid.create();
         const storageItem = new LocalStorageItem('testEvent', testGuid.toString());
-        spyOn(LocalCommandStorageService, 'addCommand').and.returnValue([storageItem]);
+        spyOn(localCommandStorageService, 'addCommand').and.returnValue([storageItem]);
 
         spyOn(azureHttpService, 'post').and.returnValue(Promise.resolve().then());
         
@@ -30,7 +30,7 @@ describe(`servicebus testing`, async () => {
         await serviceBusService.sendEventAsync(testQueue, testGuid);
 
         // Assert
-        expect(LocalCommandStorageService.addCommand).toHaveBeenCalledWith(testQueue, testGuid);
+        expect(localCommandStorageService.addCommand).toHaveBeenCalledWith(testQueue, testGuid);
     });
 
     it(`An error is throw when sending the event fails`, async () => {
@@ -47,8 +47,9 @@ describe(`servicebus testing`, async () => {
         const action = serviceBusService.sendEventAsync(testQueue, testGuid);
         
         // Assert
-        expectAsync(action).toBeRejectedWithError();
+        await expectAsync(action).toBeRejectedWithError('An error occured while sending the command: 0-test error');
     });
+
 });
 
 

@@ -1,18 +1,20 @@
 import { Guid } from "guid-typescript";
+import { injectable } from 'inversify';
 import { LocalStorageItem } from "./local-storage-item";
 
 /**
  * Manage local stored azure web event commands.
  */
+@injectable()
 export class LocalCommandStorageService {
-    private static localStorageKey: string = "SENTMESSAGES";
+    private localStorageKey: string = "SENTMESSAGES";
 
     /**
      * Get a stored command by its id.
      * @param commandId The command id.
      * @returns If found the command id or null if not found.
      */
-    public static getCommand(commandId: Guid): LocalStorageItem | undefined {
+    public getCommand(commandId: Guid): LocalStorageItem | undefined {
         const storedCommands = this.getStoredCommands();
         if (!storedCommands) {
             return undefined;
@@ -25,7 +27,7 @@ export class LocalCommandStorageService {
      * Check if given command is sent.
      * @param commandId The command id.
      */
-    public static hasCommand(commandId: Guid): boolean {
+    public hasCommand(commandId: Guid): boolean {
         const storedCommands = this.getCommand(commandId);
         return storedCommands !== undefined;
     }
@@ -35,7 +37,7 @@ export class LocalCommandStorageService {
      * @param commandId The command id.
      * @returns A updated list of all send azure web events.
      */
-    public static addCommand(eventName: string, commandId: Guid): LocalStorageItem[] {
+    public addCommand(eventName: string, commandId: Guid): LocalStorageItem[] {
         const storedCommands = this.getStoredCommands() || new Array<LocalStorageItem>();
 
         storedCommands.push(new LocalStorageItem(eventName, commandId.toString()));
@@ -49,7 +51,7 @@ export class LocalCommandStorageService {
      * @param commandId The command id
      * @returns A updated list of all send azure web events
      */
-    public static deleteCommand(commandId: Guid): LocalStorageItem[] | undefined {
+    public deleteCommand(commandId: Guid): LocalStorageItem[] | undefined {
         const storedCommands = this.getStoredCommands();
         if (!storedCommands) {
             return undefined;
@@ -61,7 +63,7 @@ export class LocalCommandStorageService {
         return storedCommands;
     }
 
-    private static getStoredCommands(): LocalStorageItem[] | undefined {
+    private getStoredCommands(): LocalStorageItem[] | undefined {
         const storedCommands = localStorage.getItem(this.localStorageKey);
         if (!storedCommands) {
             return undefined;
@@ -70,7 +72,7 @@ export class LocalCommandStorageService {
         return JSON.parse(storedCommands) as LocalStorageItem[];       
     }
 
-    private static setStoredCommands(commands: LocalStorageItem[]): void {
+    private setStoredCommands(commands: LocalStorageItem[]): void {
         localStorage.setItem(this.localStorageKey, JSON.stringify(commands));
     }
 }
