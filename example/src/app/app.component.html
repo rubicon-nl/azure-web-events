@@ -1,0 +1,35 @@
+<div class="jumbotron">
+  <h1>Demo azure-web-event</h1>
+  <hr class="my-4">
+  <form #messageForm="ngForm" (ngSubmit)="sendMessage(); messageForm.reset()">
+    <div class="form-group">
+      <label for="message">Message</label>
+      <input type="text" required [(ngModel)]="message" name="message" class="form-control" id="message">
+    </div>
+    <button type="submit" class="btn btn-primary" [disabled]="!messageForm.form.valid">Send</button>
+  </form>
+</div>
+<table class="table">
+  <thead class="thead-light">
+    <tr>
+      <th scope="col">Id</th>
+      <th scope="col">Sent timestamp</th>
+      <th scope="col">Message</th>
+      <th scope="col">Response timestamp</th>
+      <th scope="col">Response message</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let m of sentMessages">
+      <th>{{ m.id }}</th>
+      <th>{{ m.sendTimeStamp }}</th>
+      <th>{{ m.sendMessage }}</th>
+      <th>{{ m.responseTimeStamp }}</th>
+      <th>{{ m.responseMessage }}</th>
+      <th>
+        <button type="button" class="btn btn-sm btn-danger" (click)="removeMessage(m.id)">X</button>
+      </th>
+    </tr>
+  </tbody>
+</table>
