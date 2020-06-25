@@ -1,8 +1,7 @@
 import { injectable } from 'inversify';
-import { IAzureHttpService } from './interfaces/azure-http-service';
 
 @injectable()
-export class AzureHttpService implements IAzureHttpService {
+export class AzureHttpService {
 
     public async post(url: string, sasKey: string, correlationId: string, body?: any[]): Promise<void> {
         return new Promise((resolve, reject) => {

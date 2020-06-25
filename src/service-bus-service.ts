@@ -1,25 +1,22 @@
 import { Guid } from 'guid-typescript';
+import { inject, injectable } from 'inversify';
+import { AzureHttpService } from './azure-http-service';
 import { LocalCommandStorageService } from './local-command-storage-service';
-import { IServiceBusService } from './interfaces/service-bus.service';
-import { injectable, inject } from 'inversify';
-import TYPES from './interfaces/types';
-import { IAzureHttpService } from './interfaces/azure-http-service';
 
 @injectable()
-export class ServiceBusService implements IServiceBusService {
-    protected http: IAzureHttpService;
+export class ServiceBusService {
     private baseUrl: string;
     private sharedAccessKey: string;
 
-    constructor(@inject(TYPES.IAzureHttpService)  http: IAzureHttpService) {
-        this.http = http;
+    constructor(
+        @inject(AzureHttpService) private http: AzureHttpService,
+        @inject(LocalCommandStorageService) private localCommandStorageService: LocalCommandStorageService) {
     }
 
     public initialize(sbNameSpace: string, sharedAccesKey: string): void {
         this.baseUrl = sbNameSpace;
         this.sharedAccessKey = sharedAccesKey;
     }
-
 
     /**
      * Send a event to azure
@@ -32,7 +29,7 @@ export class ServiceBusService implements IServiceBusService {
         await this.http.post(url, this.sharedAccessKey, correlationId.toString(), args)
             .then(() => {
                 // First we add it to ensure that the id is stored before the response is received.
-                LocalCommandStorageService.addCommand(eventName, correlationId);
+                this.localCommandStorageService.addCommand(eventName, correlationId);
             }).catch((reason) => {
                 throw new Error(`An error occured while sending the command: ${reason.status}-${reason.statusText}`);
             });

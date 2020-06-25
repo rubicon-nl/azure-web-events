@@ -1,17 +1,15 @@
 import { Guid } from 'guid-typescript';
-import { AzureWebConfig } from './azure-web-config';
-import { SignalrService } from './signalr-service';
 import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { AzureWebConfig } from './azure-web-config';
 import container from './inversify.config';
-import TYPES from './interfaces/types';
-import { IServiceBusService } from './interfaces/service-bus.service';
-import { ISignalRService } from './interfaces/signal-r-service';
+import { ServiceBusService } from './service-bus-service';
+import { SignalrService } from './signalr-service';
 
 export class AzureWebEvents {
-    private srClient: ISignalRService = container.get<ISignalRService>(TYPES.ISignalRService);
-    private sbClient: IServiceBusService = container.get<IServiceBusService>(TYPES.IServiceBusService);
     public initialized: boolean = false;
+    private sbClient = container.get(ServiceBusService);
+    private srClient = container.get(SignalrService);
 
     /**
      * Initialize the communication with azure.
