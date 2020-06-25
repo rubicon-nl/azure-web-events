@@ -9,12 +9,13 @@ describe(`servicebus testing`, async () => {
     let serviceBusService: ServiceBusService;
     let azureHttpService: AzureHttpService;
     let localCommandStorageService: LocalCommandStorageService;
+    const azureApiEndpoint: string = 'https://azure.test.url.com/api';
+    const sasKey: string = 'MLKDPH&*I#$RNFDKLSDH*(OPGL$';
         
     beforeEach(async () => {
         azureHttpService = container.get(AzureHttpService);
         localCommandStorageService = container.get(LocalCommandStorageService);
         serviceBusService = new ServiceBusService(azureHttpService, localCommandStorageService);
-        serviceBusService.initialize('testNameSpace', 'testKey');
     });
 
     it(`Sent an event and store the event in a localstorage`, async () => {
@@ -22,11 +23,13 @@ describe(`servicebus testing`, async () => {
         const testQueue: string = 'testQueue';
         const testGuid: Guid = Guid.create();
         const storageItem = new LocalStorageItem('testEvent', testGuid.toString());
-        spyOn(localCommandStorageService, 'addCommand').and.returnValue([storageItem]);
+        
 
+        spyOn(localCommandStorageService, 'addCommand').and.returnValue([storageItem]);
         spyOn(azureHttpService, 'post').and.returnValue(Promise.resolve().then());
         
         // Act
+        serviceBusService.initialize(azureApiEndpoint, sasKey);
         await serviceBusService.sendEventAsync(testQueue, testGuid);
 
         // Assert
@@ -34,22 +37,35 @@ describe(`servicebus testing`, async () => {
     });
 
     it(`An error is throw when sending the event fails`, async () => {
-
         // Arrange
         const testQueue = 'testQueue';
         const testGuid = Guid.create();
+
         spyOn(azureHttpService, 'post').and.rejectWith({
             status: 0,
             statusText: 'test error'
         });
         
         // Act
+        serviceBusService.initialize(azureApiEndpoint, sasKey);
         const action = serviceBusService.sendEventAsync(testQueue, testGuid);
         
         // Assert
         await expectAsync(action).toBeRejectedWithError('An error occured while sending the command: 0-test error');
     });
 
+    it(`Call sendEventAsync before service is initialized returns an error`, async () => {
+        // Arrange
+        const testQueue = 'testQueue';
+        const testGuid = Guid.create();
+
+        // Act
+        const action = serviceBusService.sendEventAsync(testQueue, testGuid);
+
+        // Assert
+        await expectAsync(action).toBeRejectedWithError('Azure API endpoint or SAS key is missing, Initialize service before sending event.');
+
+    })
 });
 
 

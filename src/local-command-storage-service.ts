@@ -1,6 +1,8 @@
+import 'reflect-metadata';
 import { Guid } from "guid-typescript";
-import { injectable } from 'inversify';
+import { injectable, inject } from 'inversify';
 import { LocalStorageItem } from "./local-storage-item";
+import { LocalStorageService } from './local-storage-service';
 
 /**
  * Manage local stored azure web event commands.
@@ -9,13 +11,16 @@ import { LocalStorageItem } from "./local-storage-item";
 export class LocalCommandStorageService {
     private localStorageKey: string = "SENTMESSAGES";
 
+    constructor(@inject(LocalStorageService)private storageService: LocalStorageService) {
+    }
+
     /**
      * Get a stored command by its id.
      * @param commandId The command id.
      * @returns If found the command id or null if not found.
      */
     public getCommand(commandId: Guid): LocalStorageItem | undefined {
-        const storedCommands = this.getStoredCommands();
+        const storedCommands = this.storageService.get(this.localStorageKey);
         if (!storedCommands) {
             return undefined;
         }
@@ -38,10 +43,10 @@ export class LocalCommandStorageService {
      * @returns A updated list of all send azure web events.
      */
     public addCommand(eventName: string, commandId: Guid): LocalStorageItem[] {
-        const storedCommands = this.getStoredCommands() || new Array<LocalStorageItem>();
+        const storedCommands = this.storageService.get(this.localStorageKey) || new Array<LocalStorageItem>();
 
         storedCommands.push(new LocalStorageItem(eventName, commandId.toString()));
-        this.setStoredCommands(storedCommands);
+        this.storageService.set(this.localStorageKey, storedCommands);
 
         return storedCommands;
     }
@@ -52,27 +57,14 @@ export class LocalCommandStorageService {
      * @returns A updated list of all send azure web events
      */
     public deleteCommand(commandId: Guid): LocalStorageItem[] | undefined {
-        const storedCommands = this.getStoredCommands();
+        const storedCommands = this.storageService.get(this.localStorageKey);
         if (!storedCommands) {
             return undefined;
         }       
         const index = storedCommands.findIndex((id) => commandId.toString() === id.correlationId);
         storedCommands.splice(index, 1);
 
-        this.setStoredCommands(storedCommands);
+        this.storageService.set(this.localStorageKey, storedCommands);
         return storedCommands;
-    }
-
-    private getStoredCommands(): LocalStorageItem[] | undefined {
-        const storedCommands = localStorage.getItem(this.localStorageKey);
-        if (!storedCommands) {
-            return undefined;
-        }
-
-        return JSON.parse(storedCommands) as LocalStorageItem[];       
-    }
-
-    private setStoredCommands(commands: LocalStorageItem[]): void {
-        localStorage.setItem(this.localStorageKey, JSON.stringify(commands));
     }
 }
