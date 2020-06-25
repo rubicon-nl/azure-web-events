@@ -11,7 +11,7 @@ export class AzureHttpService implements IAzureHttpService {
             request.onerror = () => {
                 reject({
                     status: 0,
-                    statusText: request.statusText
+                    statusText: `An network error has occurred`
                 });
             }
 
@@ -20,9 +20,10 @@ export class AzureHttpService implements IAzureHttpService {
                     resolve(request.response);
                 } else {
                     reject({
-                        status: request.status,
-                        statusText: request.statusText
-                    });
+                            status: request.status,
+                            statusText: request.statusText
+                        }
+                    );
                 }
             }
             
