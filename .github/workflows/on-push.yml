@@ -18,8 +18,6 @@ jobs:
         node-version: '12'
     - name: install dependencies
       run: npm install
-    - name: Build CI
-      run: npm run-script build
     - name: Run all tests
       run: npm run-script test
     - name: Run tslint
