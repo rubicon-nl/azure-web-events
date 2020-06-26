@@ -2,7 +2,7 @@
 
 This example project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.4.
 With this project you are able to test en see how Azure-Web-Events works.
-This project has a direct import from the Azure-Web-Event package therefor it always uses the actual version.
+This project has a direct import from the Azure-Web-Events package therefor it always uses the actual version.
 
 This project is a basic angular 9 project with a single component (app.component).
 This component has a basic UI which can be used for sending and recieving azure web events.
