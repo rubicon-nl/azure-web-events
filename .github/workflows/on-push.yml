@@ -25,6 +25,6 @@ jobs:
     - name: Build CI
       run: npm run-script build
     - name: Run all tests
-      run: npm test
+      run: npm run-script test
     - name: Run tslint
       run: npm run-script lint
