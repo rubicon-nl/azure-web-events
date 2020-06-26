@@ -2,10 +2,9 @@
 
 name: run npm scripts on push
 
-on:[push]
+on: [push]
 
 jobs:
-
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
@@ -16,17 +15,16 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
-
-    # Runs a single command using the runners shell
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-     - run: npm ci
-     - run: npm run-script build
-     - run: npm test
-       env: 
-        CI: true
-     - run: npm lint
+    - name: install dependencies
+      run: npm ci
+    - name: Build CI
+      run: npm run-script build
+    - name: Run all tests
+      run: npm test
+    - name: Run tslint
+      run: npm lint
