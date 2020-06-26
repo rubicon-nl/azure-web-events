@@ -8,10 +8,6 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: windows-latest
-    
-    strategy:
-      matrix:
-        node-version: [12.x]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -19,9 +15,9 @@ jobs:
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: '12'
     - name: install dependencies
-      run: npm ci
+      run: npm install
     - name: Build CI
       run: npm run-script build
     - name: Run all tests
