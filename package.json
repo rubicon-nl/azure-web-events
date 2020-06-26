@@ -9,7 +9,7 @@
     "build": "npm run clean && tsc && tsc -m es6 --outDir lib-esm && webpack",
     "build:ts": "",
     "lint": "tslint -p tsconfig.json",
-    "test": "jasmine-ts config=./spec/support/jasmine.json",
+    "test": "jasmine-ts",
     "test-watch": "nodemon --ext ts --exec \"npm test \"'"
   },
   "keywords": [
