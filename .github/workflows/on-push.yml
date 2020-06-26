@@ -27,4 +27,4 @@ jobs:
     - name: Run all tests
       run: npm test
     - name: Run tslint
-      run: npm lint
+      run: npm run-script lint
