@@ -2,12 +2,12 @@
   "name": "azure-web-events",
   "version": "0.4.0",
   "description": "This is a concept version",
-  "main": "./lib/src/index.js",
-  "types": "./lib/src/index.d.ts",
+  "main": "./lib/azure-web-events.js",
+  "types": "./lib/azure-web-events.d.ts",
   "scripts": {
-    "clean": "shx rm -rf _bundles lib lib-esm",
-    "build": "npm run clean && tsc && tsc -m es6 --outDir lib-esm && webpack",
-    "build:ts": "",
+    "clean": "shx rm -rf dist lib lib-esm",
+    "build": "npm run clean && tsc && tsc -m es6 --outDir lib-esm && webpack --mode=development",
+    "build:prod": "npm run clean && tsc && tsc -m es6 --outDir lib-esm && webpack --mode=production",
     "lint": "tslint -p tsconfig.json",
     "test": "jasmine-ts",
     "test-watch": "nodemon --ext ts --exec \"npm test \"'"
@@ -21,9 +21,15 @@
   "license": "ISC",
   "homepage": "https://github.com/arthurvandijk/azure-web-events",
   "files": [
-    "/lib/**/*"
+    "/lib/**/*",
+    "/lib-esm/**/*",
+    "/dist/**/*",
+    "readme.MD",
+    "package.json"
   ],
-  "publishConfig": { "registry": "https://npm.pkg.github.com/" },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/arthurvandijk/azure-web-events.git"
@@ -37,6 +43,7 @@
     "@types/jasmine": "^3.5.10",
     "@types/node": "^13.13.12",
     "awesome-typescript-loader": "^5.2.1",
+    "clean-webpack-plugin": "^3.0.0",
     "inversify": "^5.0.1",
     "jasmine": "^3.5.0",
     "jasmine-console-reporter": "^3.1.0",
@@ -53,7 +60,7 @@
     "tslint": "^6.1.2",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.9.5",
-    "webpack": "^4.29.0",
+    "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.1.14"
   }

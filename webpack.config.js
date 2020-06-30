@@ -1,5 +1,5 @@
 const path = require('path');
-const TerserPlugin = require('terser-webpack-plugin');
+const CleanWebpackPlugin = require('webpack-clean');
 
 module.exports = {
     entry: {
@@ -7,34 +7,30 @@ module.exports = {
         'azure-web-events.min': './src/index.ts'
     },
     output: {
-        path: path.resolve(__dirname, '_bundles'),
+        path: path.resolve(__dirname, 'dist'),
         filename: '[name].js',
-        libraryTarget: 'umd',
         library: 'AzureWebEvents',
+        libraryTarget: 'umd',
+        globalObject: 'this',
         umdNamedDefine: true,
     },
     resolve: {
-        extensions: [ '.tsx', '.ts','.js'],
+        extensions: [ '.ts','.js'],
     },
     devtool: 'source-map',
     module: {
-        rules: [{
-            test: /\.tsx?$/,
-            loader: 'awesome-typescript-loader',
-            exclude: /node_modules/,
-            query: {
-                declaration: false,
+        rules: [
+            {
+                test: /\.tsx?$/,
+                loader: 'awesome-typescript-loader',
+                exclude: /node_modules/,
+                query: {
+                  declaration: false,
+                }
             }
-        }]
-    },
-    optimization: {
-        minimize: true,
-        minimizer: [
-            new TerserPlugin({
-             sourceMap: true,
-             include: /\.min\.js$/,   
-            }),
         ]
     },
-
+    plugins: [
+        new CleanWebpackPlugin()
+    ]
 };
