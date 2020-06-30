@@ -1,5 +1,5 @@
 {
-  "name": "azure-web-events",
+  "name": "@arthurvandijk/azure-web-events",
   "version": "0.4.0",
   "description": "This is a concept version",
   "main": "./lib/azure-web-events.js",
@@ -28,7 +28,8 @@
     "package.json"
   ],
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
+    "registry": "https://npm.pkg.github.com/",
+    "access": "public"
   },
   "repository": {
     "type": "git",
