@@ -22,8 +22,9 @@ jobs:
             key: ${{ matrix.node-version }}-${{ runner.OS }}-build-${{ hasFiles('package.json') }}
         - name: Build
           if: steps.cache-modules.outputs.cache-hit != 'true'
-          run: npm install
-          run: npm run build:prod
+          run: | 
+            npm install
+            npm run build:prod
         - name: tsLint
           run: npm run lint
         - name: test
@@ -38,7 +39,7 @@ jobs:
       - name: Cache node_modules
         id: cache-modules
         uses: actions/cache@v1
-         with:
+        with:
           path: node_modules
           key: 12.x-${{ runner.OS }}-build-${{ hashFiles('package.json') }}
       - name: Install
