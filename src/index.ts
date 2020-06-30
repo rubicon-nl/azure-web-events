@@ -1,14 +1,15 @@
 import { Guid } from 'guid-typescript';
-import { AzureWebConfig } from './azure-web-config';
-import { SignalrService } from './signalr-service';
-import { ServiceBusService } from './service-bus-service';
 import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { AzureWebConfig } from './azure-web-config';
+import container from './inversify.config';
+import { ServiceBusService } from './service-bus-service';
+import { SignalrService } from './signalr-service';
 
 export class AzureWebEvents {
-    private sbClient: ServiceBusService;
-    private srClient: SignalrService;
     public initialized: boolean = false;
+    private sbClient = container.get(ServiceBusService);
+    private srClient = container.get(SignalrService);
 
     /**
      * Initialize the communication with azure.
@@ -18,8 +19,7 @@ export class AzureWebEvents {
     public async init(url: string, sharedKey: string): Promise<void> {
         this.getAweConfig(url, sharedKey)
         .subscribe((config: AzureWebConfig) => {
-            this.sbClient = new ServiceBusService(config.nameSpace, config.sharedAccessKey);
-            this.srClient = new SignalrService();
+            this.sbClient.initialize(config.nameSpace, config.sharedAccessKey);
             this.srClient.initialize(config.nameSpace);
             this.initialized = true;
         });
@@ -47,7 +47,7 @@ export class AzureWebEvents {
             this.listenToEvent("error-commands", error);    
         }
         
-        await this.sbClient.sendCommandAsync(methodName, correlationId, args);
+        await this.sbClient.sendEventAsync(methodName, correlationId, args);
     }
 
      /**

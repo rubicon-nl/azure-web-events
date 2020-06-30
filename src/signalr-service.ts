@@ -1,12 +1,18 @@
-import { Subject } from 'rxjs';
-import { HubConnection, HubConnectionBuilder, LogLevel, HubConnectionState } from '@aspnet/signalr';
-import { LocalCommandStorageService } from './local-command-storage-service';
+import { HubConnection, HubConnectionBuilder, HubConnectionState, LogLevel } from '@aspnet/signalr';
 import { Guid } from 'guid-typescript';
+import { inject, injectable } from 'inversify';
+import { Subject } from 'rxjs';
+import { LocalCommandStorageService } from './local-command-storage-service';
 import { SignalrResponse } from './signalr-response';
 
+@injectable()
 export class SignalrService {
     private signalrMessage: Subject<any> = new Subject<any>();
     private hubConnection: HubConnection;
+
+    constructor(
+        @inject(LocalCommandStorageService) private localCommandStorageService: LocalCommandStorageService) {
+    }
 
     /**
      * Create a new instance of SignalRService
@@ -44,8 +50,8 @@ export class SignalrService {
             const response = JSON.parse(args) as SignalrResponse;
             const correlationId = Guid.parse(response.CorrelationId);
             
-            if (LocalCommandStorageService.hasCommand(correlationId)) {
-                LocalCommandStorageService.deleteCommand(correlationId);
+            if (this.localCommandStorageService.hasCommand(correlationId)) {
+                this.localCommandStorageService.deleteCommand(correlationId);
                 this.signalrMessage.next(response.Body);
             }
         });

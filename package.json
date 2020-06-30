@@ -2,13 +2,15 @@
   "name": "azure-web-events",
   "version": "0.4.0",
   "description": "This is a concept version",
-  "main": "./lib/index.js",
-  "types": "./lib/index.d.ts",
+  "main": "./lib/azure-web-events.js",
+  "types": "./lib/azure-web-events.d.ts",
   "scripts": {
-    "clean": "shx rm -rf _bundles lib lib-esm",
-    "build": "npm run clean && tsc && tsc -m es6 --outDir lib-esm && webpack",
-    "build:ts": "",
-    "lint": "tslint -p tsconfig.json"
+    "clean": "shx rm -rf dist lib lib-esm",
+    "build": "npm run clean && tsc && tsc -m es6 --outDir lib-esm && webpack --mode=development",
+    "build:prod": "npm run clean && tsc && tsc -m es6 --outDir lib-esm && webpack --mode=production",
+    "lint": "tslint -p tsconfig.json",
+    "test": "jasmine-ts",
+    "test-watch": "nodemon --ext ts --exec \"npm test \"'"
   },
   "keywords": [
     "Azure",
@@ -19,10 +21,14 @@
   "license": "ISC",
   "homepage": "https://github.com/arthurvandijk/azure-web-events",
   "files": [
-    "/lib/**/*"
+    "/lib/**/*",
+    "/lib-esm/**/*",
+    "/dist/**/*",
+    "readme.MD",
+    "package.json"
   ],
   "publishConfig": {
-    "access": "public"
+    "registry": "https://npm.pkg.github.com/"
   },
   "repository": {
     "type": "git",
@@ -30,21 +36,32 @@
   },
   "dependencies": {
     "@aspnet/signalr": "^1.1.4",
-    "@types/node": "^13.13.5",
     "guid-typescript": "^1.0.9",
     "rxjs": "^6.5.5"
   },
   "devDependencies": {
+    "@types/jasmine": "^3.5.10",
+    "@types/node": "^13.13.12",
     "awesome-typescript-loader": "^5.2.1",
+    "clean-webpack-plugin": "^3.0.0",
+    "inversify": "^5.0.1",
     "jasmine": "^3.5.0",
+    "jasmine-console-reporter": "^3.1.0",
+    "jasmine-spec-reporter": "^5.0.2",
+    "jasmine-ts": "^0.3.0",
+    "jasmine-ts-auto-mock": "^1.0.10",
+    "nodemon": "^2.0.4",
     "pkg-ok": "^2.3.1",
     "prettier": "^2.0.5",
+    "reflect-metadata": "^0.1.13",
     "shx": "^0.3.2",
     "terser-webpack-plugin": "^3.0.1",
+    "ts-node": "^7.0.1",
     "tslint": "^6.1.2",
     "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.8.3",
-    "webpack": "^4.29.0",
+    "typescript": "^3.9.5",
+    "webpack": "^4.43.0",
+    "webpack-clean": "^1.2.5",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.1.14"
   }
