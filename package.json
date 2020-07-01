@@ -1,9 +1,9 @@
 {
   "name": "@arthurvandijk/azure-web-events",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "This is a concept version",
-  "main": "./lib/azure-web-events.js",
-  "types": "./lib/azure-web-events.d.ts",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "scripts": {
     "clean": "shx rm -rf dist lib lib-esm",
     "build": "npm run clean && tsc && tsc -m es6 --outDir lib-esm && webpack --mode=development",
