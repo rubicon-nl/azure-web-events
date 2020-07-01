@@ -1,5 +1,5 @@
 {
-  "name": "@arthurvandijk/azure-web-events",
+  "name": "azure-web-events",
   "version": "0.5.0",
   "description": "This is a concept version",
   "main": "./lib/index.js",
