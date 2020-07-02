@@ -1,6 +1,6 @@
 {
   "name": "azure-web-events",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "This is a concept version",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
