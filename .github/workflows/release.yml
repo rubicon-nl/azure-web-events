@@ -1,5 +1,5 @@
 on: [push, pull_request]
-name: Build, lint, test and Publish
+name: Build, lint, test
 
 jobs:
   test:
@@ -29,27 +29,3 @@ jobs:
         run: npm run lint
       - name: test
         run: npm run test
-  publish:
-    name: Publish
-    needs: test
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-    steps:
-      - uses: actions/checkout@v2
-      - name: Cache node_modules
-        id: cache-modules
-        uses: actions/cache@v1
-        with:
-          path: node_modules
-          key: 12.x-${{ runner.OS }}-build-${{ hashFiles('package.json') }}
-      - name: Install
-        if: steps.cache-modules.outputs.cache-hit != 'true'
-        id: npm-install
-        run: npm install
-      - name: Build
-        run: npm run build:prod
-      - name: Publish
-        uses: mikeal/merge-release@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
