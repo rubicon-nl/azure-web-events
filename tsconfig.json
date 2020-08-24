@@ -3,7 +3,7 @@
       "target": "es5",
       "module": "commonjs",
       "declaration": true,
-      "lib": ["ES2015", "dom"],
+      "lib": ["es6", "DOM"],
       "outDir": "./lib/",
       "sourceMap": true,
       "strict": true,
@@ -13,10 +13,11 @@
       "moduleResolution": "node",
       "resolveJsonModule": true,
       "types": [
-        "jasmine", "node"
+        "jasmine", "node", "reflect-metadata"
       ],
       "plugins": [],
-      "experimentalDecorators": true
+      "experimentalDecorators": true,
+      "emitDecoratorMetadata": true
     },
     "include": ["src"],
     "exclude": ["node_modules", "**/__tests__/*", "example", "lib", "lib-esm"]

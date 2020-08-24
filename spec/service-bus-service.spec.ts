@@ -36,7 +36,7 @@ describe(`servicebus testing`, async () => {
         expect(localCommandStorageService.addCommand).toHaveBeenCalledWith(testQueue, testGuid);
     });
 
-    it(`An error is throw when sending the event fails`, async () => {
+    fit(`An error is throw when sending the event fails`, async () => {
         // Arrange
         const testQueue = 'testQueue';
         const testGuid = Guid.create();

@@ -1,6 +1,7 @@
 import { Container } from 'inversify';
-import 'reflect-metadata';
+import { AzureWebConfig } from './azure-web-config';
 
 const container = new Container({ autoBindInjectable: true });
+container.bind<AzureWebConfig>(AzureWebConfig).toSelf().inSingletonScope();
 
-export default container;
+export { container };
