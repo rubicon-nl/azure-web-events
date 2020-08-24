@@ -24,7 +24,6 @@ export class ServiceBusService {
                 // First we add it to ensure that the id is stored before the response is received.
                 this.localCommandStorageService.addCommand(eventName, correlationId);
             }).catch((reason) => {
-                console.log(`the reason`, reason);
                 throw new Error(`An error occured while sending the command: ${reason.status}-${reason.statusText}`);
             });
     }

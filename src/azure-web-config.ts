@@ -36,7 +36,6 @@ export class AzureWebConfig {
         if (this.publicCLient.getAllAccounts()) {
             return this.publicCLient.getAllAccounts()[0];
         } else {
-            console.error(`No valid account found`);
             return null;
         }
     }
