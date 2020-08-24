@@ -28,7 +28,7 @@ export class AzureWebEvents {
     /** 
      * Initialize the communication with azure active directory
      * @param endpointUri: The API endpoint 
-    */
+     */
     public async initWithMsal(endpointUri: string, config: Configuration): Promise<void> {
         this.initialized = this.config.initializeAzureAD(endpointUri, config);
         this.initializeServices();

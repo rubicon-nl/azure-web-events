@@ -45,7 +45,6 @@ export class AzureHttpService {
         } else if (this.config.authenticationMethod === AuthenticationMethod.SharedAccessToken && this.config.sharedAccessToken) {
             request.setRequestHeader("x-functions-key", this.config.sharedAccessToken);
         } else {
-            console.log(`The config`, this.config);
             throw new Error(`Not authenticated with method ${this.config.authenticationMethod}, please login first`);
         }
 
