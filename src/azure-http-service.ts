@@ -1,37 +1,46 @@
-import { injectable } from 'inversify';
+import { injectable, inject } from 'inversify';
 import { AzureWebConfig } from './azure-web-config';
 import { AuthenticationMethod } from './authentication-method';
 
 @injectable()
 export class AzureHttpService {
+    private config: AzureWebConfig
    
-    constructor(private config: AzureWebConfig) {
+    constructor(@inject(AzureWebConfig) config: AzureWebConfig) {
+        this.config = config;
     }
 
     public async post(service: string, correlationId: string, body?: any[]): Promise<void> {
         return new Promise((resolve, reject) => {
-            const request = this.createHttpRequest('POST', service, correlationId);
             
-            request.onerror = () => {
+            try {
+                const request = this.createHttpRequest('POST', service, correlationId);
+                request.onerror = () => {
+                    reject({
+                        status: 0,
+                        statusText: `An network error has occurred`
+                    });
+                }
+    
+                request.onload = () => {
+                    if (request.status >= 200 && request.status <= 300) {
+                        resolve(request.response);
+                    } else {
+                        reject({
+                                status: request.status,
+                                statusText: request.statusText
+                            }
+                        );
+                    }
+                }
+                
+                request.send();    
+            } catch (error) {
                 reject({
                     status: 0,
-                    statusText: `An network error has occurred`
+                    statusText: error
                 });
-            }
-
-            request.onload = () => {
-                if (request.status >= 200 && request.status <= 300) {
-                    resolve(request.response);
-                } else {
-                    reject({
-                            status: request.status,
-                            statusText: request.statusText
-                        }
-                    );
-                }
-            }
-            
-            request.send();
+            }            
         });
     }
 
@@ -45,6 +54,10 @@ export class AzureHttpService {
         } else if (this.config.authenticationMethod === AuthenticationMethod.SharedAccessToken && this.config.sharedAccessToken) {
             request.setRequestHeader("x-functions-key", this.config.sharedAccessToken);
         } else {
+            if (this.config.authenticationMethod === undefined) {
+                throw new Error(`No Azure AD configuration found. Initialize Azure AD configuration first`);
+            }
+
             throw new Error(`Not authenticated with method ${this.config.authenticationMethod}, please login first`);
         }
 

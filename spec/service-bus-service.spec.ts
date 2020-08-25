@@ -3,7 +3,7 @@ import { AzureHttpService } from '../src/azure-http-service';
 import { LocalCommandStorageService } from '../src/local-command-storage-service';
 import { LocalStorageItem } from '../src/local-storage-item';
 import { ServiceBusService } from '../src/service-bus-service';
-import container from './../src/inversify.config';
+import {container} from './../src/inversify.config';
 
 describe(`servicebus testing`, async () => {
     let serviceBusService: ServiceBusService;
@@ -29,14 +29,13 @@ describe(`servicebus testing`, async () => {
         spyOn(azureHttpService, 'post').and.returnValue(Promise.resolve().then());
         
         // Act
-        serviceBusService.initialize(azureApiEndpoint, sasKey);
         await serviceBusService.sendEventAsync(testQueue, testGuid);
 
         // Assert
         expect(localCommandStorageService.addCommand).toHaveBeenCalledWith(testQueue, testGuid);
     });
 
-    fit(`An error is throw when sending the event fails`, async () => {
+    it(`An error is throw when sending the event fails`, async () => {
         // Arrange
         const testQueue = 'testQueue';
         const testGuid = Guid.create();
@@ -47,7 +46,6 @@ describe(`servicebus testing`, async () => {
         });
         
         // Act
-        serviceBusService.initialize(azureApiEndpoint, sasKey);
         const action = serviceBusService.sendEventAsync(testQueue, testGuid);
         
         // Assert
@@ -59,11 +57,10 @@ describe(`servicebus testing`, async () => {
         const testQueue = 'testQueue';
         const testGuid = Guid.create();
 
-        // Act
         const action = serviceBusService.sendEventAsync(testQueue, testGuid);
 
         // Assert
-        await expectAsync(action).toBeRejectedWithError('Azure API endpoint or SAS key is missing, Initialize service before sending event.');
+        await expectAsync(action).toBeRejected(new Error('An error occured while sending the command: 0-Error: No Azure AD configuration found. Initialize Azure AD configuration first.'));
 
     })
 });

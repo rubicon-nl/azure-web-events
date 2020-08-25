@@ -1,4 +1,4 @@
-import container from "../src/inversify.config";
+import { container } from "../src/inversify.config";
 import { LocalCommandStorageService } from "../src/local-command-storage-service";
 import { LocalStorageItem } from "../src/local-storage-item";
 import { Guid } from "guid-typescript";

@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { Container } from 'inversify';
 import { AzureWebConfig } from './azure-web-config';
 

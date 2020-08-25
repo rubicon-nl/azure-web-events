@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { Guid } from 'guid-typescript';
 import { tap } from 'rxjs/operators';
 import { AzureWebConfig,  } from './azure-web-config';
