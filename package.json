@@ -1,6 +1,6 @@
 {
   "name": "azure-web-events",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "description": "This is a concept version",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -19,7 +19,7 @@
   ],
   "author": "Rubicon Jeffrey & Arthur",
   "license": "ISC",
-  "homepage": "https://github.com/arthurvandijk/azure-web-events",
+  "homepage": "https://github.com/rubicon-nl/azure-web-events",
   "files": [
     "/lib/**/*",
     "/lib-esm/**/*",
@@ -28,12 +28,12 @@
     "package.json"
   ],
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/@arthurvandijk",
+    "registry": "https://npm.pkg.github.com/@rubicon-nl",
     "access": "public"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/arthurvandijk/azure-web-events.git"
+    "url": "git+https://github.com/rubicon-nl/azure-web-events.git"
   },
   "dependencies": {
     "@aspnet/signalr": "^1.1.4",
